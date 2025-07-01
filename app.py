@@ -238,8 +238,19 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="DNA-Diffusion Gradio App")
     parser.add_argument("--share", action="store_true", help="Create a public shareable link")
     parser.add_argument("--port", type=int, default=7860, help="Port to run the app on")
-    parser.add_argument("--host", type=str, default="127.0.0.1", help="Host to run the app on")
+    parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run the app on")
     args = parser.parse_args()
+    
+    # For Hugging Face Spaces deployment
+    import os
+    if os.getenv("SPACE_ID"):
+        # Running on Hugging Face Spaces
+        args.host = "0.0.0.0"
+        args.port = 7860
+        args.share = False
+        inbrowser = False
+    else:
+        inbrowser = True
     
     logger.info(f"Starting DNA-Diffusion Gradio app on {args.host}:{args.port}")
     
@@ -247,5 +258,6 @@ if __name__ == "__main__":
         share=args.share,
         server_name=args.host,
         server_port=args.port,
-        inbrowser=True
+        inbrowser=inbrowser,
+        ssr_mode=False  # Disable SSR for better compatibility
     )

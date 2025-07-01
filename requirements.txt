@@ -12,3 +12,7 @@ accelerate>=0.20.0
 # Note: DNA-Diffusion itself should be installed separately using uv:
 # git clone https://github.com/pinellolab/DNA-Diffusion.git
 # cd DNA-Diffusion && uv sync
+
+# For Hugging Face Spaces, you may need to add:
+# --extra-index-url https://download.pytorch.org/whl/cu118
+# And ensure GPU is enabled in Space settings
