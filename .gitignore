@@ -68,6 +68,7 @@ tmp/
 *.jpg
 *.gif
 !demo.gif
+!screenshot.png
 
 # Gradio
 gradio_cached_examples/
