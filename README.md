@@ -191,10 +191,11 @@ If you use this application in your research, please cite:
 ```bibtex
 @article{dnadiffusion2024,
   title={DNA-Diffusion: Leveraging Generative Models for Controlling Chromatin Accessibility and Gene Expression via Synthetic Regulatory Elements},
-  author={Luca Pinello and others},
+  author={DaSilva, Lucas Ferreira and Senan, Simon and Patel, Zain Munir and Reddy, Aniketh Janardhan and Gabbita, Sameer and Nussbaum, Zach and Córdova, César Miguel Valdez and Wenteler, Aaron and Weber, Noah and Tunjic, Tin M. and Khan, Talha Ahmad and Li, Zelun and Smith, Cameron and Bejan, Matei and Louis, Lithin Karmel and Cornejo, Paola and Connell, Will and Wong, Emily S. and Meuleman, Wouter and Pinello, Luca},
   journal={bioRxiv},
   year={2024},
-  doi={10.1101/2024.02.01.578352}
+  doi={10.1101/2024.02.01.578352},
+  url={https://www.biorxiv.org/content/10.1101/2024.02.01.578352v1}
 }
 ```
 
