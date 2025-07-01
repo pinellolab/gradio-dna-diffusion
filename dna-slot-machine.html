@@ -117,12 +117,21 @@
             text-align: center;
             font-size: 2rem;
             margin-bottom: 15px;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+        }
+
+        .title a {
+            text-decoration: none;
             background: linear-gradient(45deg, #00ff88, #00ffff, #ff00ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 30px rgba(0,255,136,0.5);
-            font-weight: bold;
-            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+        }
+
+        .title a:hover {
+            text-shadow: 0 0 40px rgba(0,255,136,0.7), 0 0 60px rgba(0,255,255,0.5);
         }
 
         .cell-type-selector {
@@ -487,7 +496,7 @@
 </head>
 <body>
     <div class="machine-container">
-        <h1 class="title">DNA-DIFFUSION</h1>
+        <h1 class="title"><a href="https://github.com/pinellolab/DNA-Diffusion" target="_blank" rel="noopener noreferrer">DNA-DIFFUSION</a></h1>
         
         <div class="cell-type-selector">
             <label class="cell-type-label">Cell Type-Specific Generation:</label>
