@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Slot Machine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent 0px,
+                    rgba(255,255,255,0.08) 1px,
+                    transparent 1px,
+                    transparent 2px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    rgba(0,0,0,0.05) 1px,
+                    transparent 1px,
+                    transparent 2px
+                ),
+                repeating-linear-gradient(
+                    45deg,
+                    transparent 0px,
+                    rgba(255,255,255,0.03) 1px,
+                    transparent 2px,
+                    transparent 3px
+                ),
+                repeating-linear-gradient(
+                    -45deg,
+                    transparent 0px,
+                    rgba(0,0,0,0.03) 1px,
+                    transparent 2px,
+                    transparent 3px
+                );
+            background-size: 2px 2px, 2px 2px, 3px 3px, 3px 3px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.8;
+            animation: staticNoise 0.1s steps(8) infinite;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 17% 23%, rgba(255,255,255,0.1) 0px, transparent 1px),
+                radial-gradient(circle at 67% 71%, rgba(0,0,0,0.08) 0px, transparent 1px),
+                radial-gradient(circle at 41% 57%, rgba(255,255,255,0.06) 0px, transparent 1px),
+                radial-gradient(circle at 89% 13%, rgba(0,0,0,0.07) 0px, transparent 1px),
+                radial-gradient(circle at 23% 89%, rgba(255,255,255,0.05) 0px, transparent 1px);
+            background-size: 3px 3px, 2px 2px, 4px 4px, 2px 2px, 3px 3px;
+            pointer-events: none;
+            z-index: 1;
+            animation: staticNoise 0.15s steps(10) infinite reverse;
+        }
+
+        @keyframes staticNoise {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-1px, -1px); }
+            20% { transform: translate(1px, 0px); }
+            30% { transform: translate(0px, 1px); }
+            40% { transform: translate(-1px, 1px); }
+            50% { transform: translate(1px, -1px); }
+            60% { transform: translate(-1px, 0px); }
+            70% { transform: translate(0px, -1px); }
+            80% { transform: translate(1px, 1px); }
+            90% { transform: translate(-1px, -1px); }
+        }
+
+        .machine-container {
+            background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+            border-radius: 20px;
+            padding: 20px;
+            padding-right: 100px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 
+                        inset 0 2px 10px rgba(255,255,255,0.1);
+            width: 95vw;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00ff88, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0,255,136,0.5);
+            font-weight: bold;
+            letter-spacing: 0.1em;
+        }
+
+        .cell-type-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .cell-type-label {
+            font-size: 1.2rem;
+            color: #ccc;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        .radio-label:hover {
+            color: #00ff88;
+        }
+
+        .radio-label input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #00ff88;
+            cursor: pointer;
+        }
+
+        .reels-container {
+            background: #000;
+            border: 3px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 100%;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            overflow: visible;
+        }
+
+        .reels-wrapper {
+            display: flex;
+            gap: 1px;
+            min-width: fit-content;
+            padding: 5px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .reel {
+            width: 18px;
+            height: 40px;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 3px rgba(0,0,0,0.1);
+        }
+
+        .reel-strip {
+            position: absolute;
+            width: 100%;
+            transition: transform 0.5s ease-out;
+        }
+
+        .nucleotide {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            background: #ffffff;
+        }
+
+        .nucleotide.A { color: #00ff00; }
+        .nucleotide.T { color: #ff0000; }
+        .nucleotide.C { color: #0000ff; }
+        .nucleotide.G { color: #ffa500; }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .spin-button {
+            background: #4a4a4a;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spin-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 30%, #00ff00 0px, transparent 2px),
+                radial-gradient(circle at 80% 70%, #ff0000 0px, transparent 2px),
+                radial-gradient(circle at 50% 50%, #0000ff 0px, transparent 2px),
+                radial-gradient(circle at 30% 80%, #ffa500 0px, transparent 2px),
+                radial-gradient(circle at 70% 20%, #00ff00 0px, transparent 2px),
+                radial-gradient(circle at 10% 60%, #ff0000 0px, transparent 2px),
+                radial-gradient(circle at 90% 40%, #0000ff 0px, transparent 2px),
+                radial-gradient(circle at 40% 10%, #ffa500 0px, transparent 2px);
+            background-size: 20px 20px, 25px 25px, 30px 30px, 15px 15px,
+                            18px 18px, 22px 22px, 28px 28px, 24px 24px;
+            opacity: 0.25;
+            animation: nucleotideNoise 0.8s steps(6) infinite;
+        }
+
+        .spin-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 60% 40%, #00ff00 0px, transparent 1px),
+                radial-gradient(circle at 25% 75%, #ff0000 0px, transparent 1px),
+                radial-gradient(circle at 85% 15%, #0000ff 0px, transparent 1px),
+                radial-gradient(circle at 15% 25%, #ffa500 0px, transparent 1px);
+            background-size: 10px 10px, 12px 12px, 14px 14px, 16px 16px;
+            opacity: 0.2;
+            animation: nucleotideNoise 1.2s steps(8) infinite reverse;
+        }
+
+        @keyframes nucleotideNoise {
+            0% { transform: translate(0, 0) scale(1); }
+            16% { transform: translate(-2px, 1px) scale(1.02); }
+            33% { transform: translate(1px, -2px) scale(0.98); }
+            50% { transform: translate(-1px, 2px) scale(1.01); }
+            66% { transform: translate(2px, -1px) scale(0.99); }
+            83% { transform: translate(-2px, -2px) scale(1.02); }
+            100% { transform: translate(1px, 1px) scale(1); }
+        }
+
+        .spin-button span {
+            position: relative;
+            z-index: 2;
+        }
+
+        .spin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+            background: #5a5a5a;
+        }
+
+        .spin-button:hover::before {
+            opacity: 0.35;
+            animation-duration: 0.4s;
+        }
+
+        .spin-button:active {
+            transform: translateY(0);
+        }
+
+        .spin-button:disabled {
+            background: #444;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .sequence-display {
+            background: #0a0a0a;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 25px 30px 15px 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            width: 100%;
+            max-width: 1200px;
+            text-align: left;
+            word-wrap: break-word;
+            line-height: 1.5;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .sequence-display::before {
+            content: 'SYNTHETIC REGULATORY ELEMENT';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0a0a0a;
+            padding: 0 15px;
+            font-size: 0.7rem;
+            color: #00ff88;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        .info {
+            text-align: center;
+            margin-top: 20px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .lab-credit {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.1rem;
+        }
+
+        .lab-credit a {
+            color: #00ff88;
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 5px 15px;
+            border: 1px solid transparent;
+            border-radius: 20px;
+        }
+
+        .lab-credit a:hover {
+            color: #fff;
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0,255,136,0.5);
+            text-shadow: 0 0 5px rgba(0,255,136,0.5);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .spinning {
+            animation: pulse 0.5s infinite;
+        }
+
+        .winning-flash {
+            animation: winFlash 1s ease-out;
+        }
+
+        @keyframes winFlash {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: rgba(0,255,136,0.2); }
+        }
+
+        .lever-container {
+            position: absolute;
+            right: -70px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+            width: 60px;
+            height: 200px;
+        }
+
+        .lever {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .lever-mount {
+            position: absolute;
+            top: 90px;
+            left: -10px;
+            width: 40px;
+            height: 60px;
+            background: linear-gradient(180deg, #555, #333);
+            border-radius: 5px 0 0 5px;
+            box-shadow: 
+                0 3px 10px rgba(0,0,0,0.3),
+                inset 0 1px 2px rgba(255,255,255,0.1);
+        }
+
+        .lever-pivot {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 8px;
+            background: #888;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .lever-arm {
+            position: absolute;
+            top: 40px;
+            left: 5px;
+            width: 10px;
+            height: 80px;
+            background: linear-gradient(180deg, #d0d0d0, #a0a0a0);
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .lever-ball {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 35% 35%, #ff8888, #ff4444, #cc0000);
+            border-radius: 50%;
+            box-shadow: 
+                0 5px 15px rgba(0,0,0,0.4),
+                inset -5px -5px 10px rgba(0,0,0,0.3),
+                inset 3px 3px 5px rgba(255,255,255,0.5);
+        }
+
+        .lever.pulled .lever-arm {
+            transform: translateY(80px);
+            height: 10px;
+        }
+
+        /* Continuous spinning animation for loading */
+        @keyframes continuousSpin {
+            from { transform: translateY(0); }
+            to { transform: translateY(-160px); }
+        }
+
+        .reel-strip.loading {
+            animation: continuousSpin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="machine-container">
+        <h1 class="title">DNA-DIFFUSION</h1>
+        
+        <div class="cell-type-selector">
+            <label class="cell-type-label">Cell Type-Specific Generation:</label>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="cellType" value="K562" checked>
+                    <span>K562</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="cellType" value="GM12878">
+                    <span>GM12878</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="cellType" value="HepG2">
+                    <span>HepG2</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="reels-container" id="reelsContainer">
+            <div class="reels-wrapper" id="reelsWrapper"></div>
+            <div class="lever-container">
+                <div class="lever" id="lever">
+                    <div class="lever-mount">
+                        <div class="lever-pivot"></div>
+                    </div>
+                    <div class="lever-arm">
+                        <div class="lever-ball"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="spin-button" id="spinButton"><span>GENERATE</span></button>
+            <div class="sequence-display" id="sequenceDisplay">
+                Press GENERATE to create sequence
+            </div>
+        </div>
+
+        <div class="info">
+            200bp Regulatory Elements · Cell Type-Specific · Synthetic Biology
+        </div>
+        
+        <div class="lab-credit">
+            <a href="https://pinellolab.org" target="_blank" rel="noopener noreferrer">
+                Pinello Lab
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const NUCLEOTIDES = ['A', 'T', 'C', 'G'];
+        const REEL_COUNT = 200;
+        let TARGET_SEQUENCE = '';
+        
+        let reels = [];
+        let isSpinning = false;
+
+        function generateRandomSequence() {
+            let sequence = '';
+            for (let i = 0; i < REEL_COUNT; i++) {
+                sequence += NUCLEOTIDES[Math.floor(Math.random() * 4)];
+            }
+            return sequence;
+        }
+
+        function createReel(index) {
+            const reel = document.createElement('div');
+            reel.className = 'reel';
+            
+            const strip = document.createElement('div');
+            strip.className = 'reel-strip';
+            
+            // Create multiple nucleotides for smooth spinning effect
+            for (let i = 0; i < 10; i++) {
+                NUCLEOTIDES.forEach(n => {
+                    const nucleotide = document.createElement('div');
+                    nucleotide.className = `nucleotide ${n}`;
+                    nucleotide.textContent = n;
+                    strip.appendChild(nucleotide);
+                });
+            }
+            
+            reel.appendChild(strip);
+            return { element: reel, strip: strip, currentPosition: 0 };
+        }
+
+        function initializeReels() {
+            const wrapper = document.getElementById('reelsWrapper');
+            wrapper.innerHTML = '';
+            reels = [];
+            
+            for (let i = 0; i < REEL_COUNT; i++) {
+                const reel = createReel(i);
+                reels.push(reel);
+                wrapper.appendChild(reel.element);
+                
+                // Set initial position to show a random nucleotide
+                const randomIndex = Math.floor(Math.random() * 4);
+                const initialOffset = -randomIndex * 40;
+                reel.strip.style.transform = `translateY(${initialOffset}px)`;
+                reel.currentPosition = randomIndex * 40;
+            }
+        }
+
+        function startContinuousSpinning() {
+            reels.forEach((reel, index) => {
+                // Add continuous spinning animation
+                reel.strip.style.transition = 'none';
+                reel.strip.classList.add('loading');
+                
+                // Add slight delay variation for visual effect
+                const delay = (index % 10) * 0.1;
+                reel.strip.style.animationDelay = `${delay}s`;
+            });
+        }
+
+        function stopAndShowSequence(sequence) {
+            TARGET_SEQUENCE = sequence;
+            
+            reels.forEach((reel, index) => {
+                // Remove continuous spinning
+                reel.strip.classList.remove('loading');
+                
+                // Calculate target position
+                const targetNucleotide = TARGET_SEQUENCE[index];
+                const targetIndex = NUCLEOTIDES.indexOf(targetNucleotide);
+                const finalPosition = targetIndex * 40;
+                
+                // Set up the final positioning animation
+                setTimeout(() => {
+                    reel.strip.style.transition = `transform ${1000 + index * 5}ms cubic-bezier(0.17, 0.67, 0.12, 0.99)`;
+                    reel.strip.style.transform = `translateY(${-finalPosition}px)`;
+                    reel.currentPosition = finalPosition;
+                }, index * 2);
+            });
+            
+            // Show the complete sequence after animation
+            setTimeout(() => {
+                const container = document.getElementById('reelsContainer');
+                const display = document.getElementById('sequenceDisplay');
+                const button = document.getElementById('spinButton');
+                const lever = document.getElementById('lever');
+                
+                container.classList.remove('spinning');
+                container.classList.add('winning-flash');
+                
+                display.innerHTML = `<strong>Generated Sequence:</strong><br>${TARGET_SEQUENCE}`;
+                button.disabled = false;
+                isSpinning = false;
+                
+                // Release the lever
+                lever.classList.remove('pulled');
+                
+                setTimeout(() => {
+                    container.classList.remove('winning-flash');
+                }, 1000);
+            }, 1500);
+        }
+
+        function startGeneration() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            const button = document.getElementById('spinButton');
+            const display = document.getElementById('sequenceDisplay');
+            const container = document.getElementById('reelsContainer');
+            const lever = document.getElementById('lever');
+            
+            // Pull the lever
+            lever.classList.add('pulled');
+            
+            button.disabled = true;
+            display.textContent = 'Generating cell type-specific regulatory element...';
+            container.classList.add('spinning');
+            
+            // Start continuous spinning immediately
+            startContinuousSpinning();
+            
+            // Get selected cell type
+            const cellType = document.querySelector('input[name="cellType"]:checked').value;
+            
+            // Send request to parent window
+            window.parent.postMessage({
+                type: 'generate_request',
+                cellType: cellType
+            }, '*');
+        }
+
+        // Initialize
+        initializeReels();
+        
+        // Event listeners
+        document.getElementById('spinButton').addEventListener('click', startGeneration);
+        
+        // Lever click functionality
+        document.getElementById('lever').addEventListener('click', function() {
+            if (!isSpinning) {
+                startGeneration();
+            }
+        });
+        
+        // Listen for messages from parent window
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'sequence_generated') {
+                // Stop spinning and show the actual sequence
+                stopAndShowSequence(event.data.sequence);
+            } else if (event.data.type === 'generation_error') {
+                // Stop spinning and show error
+                reels.forEach(reel => {
+                    reel.strip.classList.remove('loading');
+                });
+                
+                const container = document.getElementById('reelsContainer');
+                const display = document.getElementById('sequenceDisplay');
+                const button = document.getElementById('spinButton');
+                const lever = document.getElementById('lever');
+                
+                container.classList.remove('spinning');
+                display.innerHTML = '<strong style="color: #F44336;">Error:</strong> ' + event.data.error;
+                button.disabled = false;
+                isSpinning = false;
+                lever.classList.remove('pulled');
+            }
+        });
+        
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !isSpinning) {
+                e.preventDefault();
+                startGeneration();
+            }
+        });
+    </script>
+</body>
+</html>

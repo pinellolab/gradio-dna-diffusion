@@ -1,0 +1,14 @@
+# Core dependencies for Gradio DNA-Diffusion app
+gradio>=4.44.0
+torch>=2.0.0
+transformers>=4.30.0
+numpy>=1.24.0
+
+# Model loading and utilities
+huggingface-hub>=0.16.0
+safetensors>=0.3.0
+accelerate>=0.20.0
+
+# Note: DNA-Diffusion itself should be installed separately using uv:
+# git clone https://github.com/pinellolab/DNA-Diffusion.git
+# cd DNA-Diffusion && uv sync

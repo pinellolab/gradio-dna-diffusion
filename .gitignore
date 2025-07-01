@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# DNA-Diffusion repository
+DNA-Diffusion/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Model weights and data
+*.pt
+*.pth
+*.pkl
+*.safetensors
+checkpoints/
+models/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Generated files
+*.png
+*.jpg
+*.gif
+!demo.gif
+
+# Gradio
+gradio_cached_examples/
+flagged/
+
+# Test and development files
+test_*.py
+app_*.py
+!app.py
+dna-slot-machine_*.html
+!dna-slot-machine.html
+*_test.html
+*.ipynb
+NOTES.md
+TODO.md
+DEBUG_*.md
+NEXT_*.md
+GUI_*.md
