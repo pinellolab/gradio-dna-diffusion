@@ -273,6 +273,5 @@ if __name__ == "__main__":
         share=args.share,
         server_name=args.host,
         server_port=args.port,
-        inbrowser=inbrowser,
-        ssr_mode=False  # Disable SSR for better compatibility
+        inbrowser=inbrowser
     )
