@@ -14,6 +14,20 @@ import html
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+# Try to import spaces for GPU decoration
+try:
+    import spaces
+    SPACES_AVAILABLE = True
+except ImportError:
+    SPACES_AVAILABLE = False
+    # Create a dummy decorator if spaces is not available
+    class spaces:
+        @staticmethod
+        def GPU(duration=60):
+            def decorator(func):
+                return func
+            return decorator
+
 # Try to import model, but allow app to run without it for UI development
 try:
     from dna_diffusion_model import DNADiffusionModel, get_model
@@ -61,6 +75,7 @@ class DNADiffusionApp:
         finally:
             self.model_loading = False
     
+    @spaces.GPU(duration=60)
     def generate_sequence(self, cell_type: str, guidance_scale: float = 1.0) -> Tuple[str, Dict[str, Any]]:
         """Generate a DNA sequence using the model or mock data"""
         
