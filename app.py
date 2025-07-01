@@ -124,8 +124,14 @@ def create_demo():
     # CSS to hide backend controls and prevent scrolling
     css = """
     #hidden-controls { display: none !important; }
-    .gradio-container { overflow: hidden; }
+    .gradio-container { 
+        overflow: hidden; 
+        background-color: #000000 !important;
+    }
     #dna-frame { overflow: hidden; position: relative; }
+    body {
+        background-color: #000000 !important;
+    }
     """
     
     # JavaScript for handling communication between iframe and Gradio
