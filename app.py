@@ -121,9 +121,11 @@ app = DNADiffusionApp()
 def create_demo():
     """Create the Gradio demo interface"""
     
-    # CSS to hide backend controls
+    # CSS to hide backend controls and prevent scrolling
     css = """
     #hidden-controls { display: none !important; }
+    .gradio-container { overflow: hidden; }
+    #dna-frame { overflow: hidden; position: relative; }
     """
     
     # JavaScript for handling communication between iframe and Gradio
@@ -216,7 +218,7 @@ def create_demo():
         # Main interface - the slot machine in an iframe
         # Escape the HTML content for srcdoc
         escaped_html = html.escape(SLOT_MACHINE_HTML, quote=True)
-        iframe_html = f'<iframe srcdoc="{escaped_html}" style="width: 100%; height: 100vh; border: none;"></iframe>'
+        iframe_html = f'<iframe srcdoc="{escaped_html}" style="width: 100%; height: 800px; border: none; display: block;"></iframe>'
         
         html_display = gr.HTML(
             iframe_html,
